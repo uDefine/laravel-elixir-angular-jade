@@ -14,11 +14,11 @@ var notify = require('gulp-notify');
  |
  */
 
-elixir.extend('angularJade', function(src, output, options) {
+elixir.extend('angularJade', function(args, subName) {
 
     var config = this;
 
-    var baseDir = src || config.assetsDir + 'jade/';
+    var baseDir = args.src || config.assetsDir + 'jade/';
 
     gulp.task('angularJade', function() {
 
@@ -33,17 +33,18 @@ elixir.extend('angularJade', function(src, output, options) {
             this.emit('end');
         };
 
-        return gulp.src(baseDir + '/**/*.jade')
+        return gulp.src(baseDir)
             .pipe(plugins.if(config.sourcemaps, plugins.sourcemaps.init()))
             .pipe(plugins.jade({locals: {}}).on('error', onError))
             .pipe(plugins.angularTemplatecache({
                 module: "app.templates",
                 root: "/templates",
-                standalone: true
+                standalone: true,
+				filename: args.outputFilename
             }))
             .pipe(plugins.if(config.production, plugins.uglify()))
             .pipe(plugins.if(config.sourcemaps, plugins.sourcemaps.write('.')))
-            .pipe(gulp.dest(output || config.jsOutput))
+            .pipe(gulp.dest(args.output || config.jsOutput))
             .pipe(notify({
                 title: 'Laravel Elixir',
                 subtitle: 'Angular Jade Compiled!',
@@ -52,8 +53,8 @@ elixir.extend('angularJade', function(src, output, options) {
             }));
     });
 
-    this.registerWatcher('angularJade', baseDir + '/**/*.jade');
+    this.registerWatcher('angularJade' + subName, baseDir);
 
-    return this.queueTask('angularJade');
+    return this.queueTask('angularJade' + subName);
 
 });
