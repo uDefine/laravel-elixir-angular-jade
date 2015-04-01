@@ -20,7 +20,7 @@ elixir.extend('angularJade', function(args, subName) {
 
     var baseDir = args.src || config.assetsDir + 'jade/';
 
-    gulp.task('angularJade', function() {
+    gulp.task('angularJade' + subName, function() {
 
         var onError = function(err) {
             notify.onError({
